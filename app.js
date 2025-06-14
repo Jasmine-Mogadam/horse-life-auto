@@ -82,11 +82,11 @@ let lastTraits = [];
 
 function buildTableColumns(target) {
   let html = "";
-  html += '<th style="width:80px;font-size:13px;">% Match</th>';
+  html += '<th style="width:65px;font-size:13px;">% Match</th>';
   html += '<th style="width:40px;font-size:13px;"></th>'; // drag handle
   html += '<th style="width:110px;font-size:13px;">Name</th>';
-  html += '<th style="width:105px;font-size:13px;">Size</th>'; // slightly larger
-  html += '<th style="width:80px;font-size:13px;">Gender</th>'; // slightly smaller
+  html += '<th style="width:90px;font-size:13px;">Size</th>'; // slightly larger
+  html += '<th style="width:52px;font-size:13px;">Gender</th>'; // smaller gender column
   for (const trait of target.traits) {
     html += `<th class="trait-header" style="width:60px;word-break:break-word;white-space:normal;font-size:13px;">${trait}</th>`;
   }
@@ -107,7 +107,7 @@ function buildTableColumns(target) {
       </div>
     </th>`;
   }
-  html += '<th style="width:80px;font-size:13px;"></th>'; // delete btn
+  html += '<th style="width:40px;font-size:13px;"></th>'; // delete btn (fit contents)
   return html;
 }
 
@@ -218,6 +218,9 @@ function renderTable(forceRebuildColumns = false) {
     const tdDrag = document.createElement("td");
     tdDrag.className = "draggable";
     tdDrag.style.width = "40px"; // fit contents
+    tdDrag.style.maxWidth = "40px";
+    tdDrag.style.minWidth = "40px";
+    tdDrag.style.textAlign = "center";
     tdDrag.innerHTML = '<i class="fa fa-bars"></i>';
     tr.append(tdDrag);
     // Name
@@ -260,13 +263,35 @@ function renderTable(forceRebuildColumns = false) {
     tr.append(tdSize);
     // Gender
     const tdGender = document.createElement("td");
-    tdGender.style.width = "70px"; // match header
+    tdGender.style.width = "55px"; // match header, smaller
     let genderMatch = horse.gender === target.gender;
     tdGender.style = genderMatch ? "background-color:#b6fcb6" : "";
+    // Flexbox centering for gender select
+    const genderFlex = document.createElement("div");
+    genderFlex.style.display = "flex";
+    genderFlex.style.justifyContent = "center";
+    genderFlex.style.alignItems = "center";
+    genderFlex.style.width = "100%";
+    genderFlex.style.height = "100%";
     const genderSelect = document.createElement("select");
     genderSelect.className = "form-select form-select-sm gender-select";
     genderSelect.setAttribute("data-field", "gender");
     genderSelect.setAttribute("data-idx", idx);
+    genderSelect.style.appearance = "none";
+    genderSelect.style.webkitAppearance = "none";
+    genderSelect.style.mozAppearance = "none";
+    genderSelect.style.background = "none";
+    genderSelect.style.paddingRight = "0";
+    genderSelect.style.textAlign = "center";
+    genderSelect.style.textAlignLast = "left";
+    genderSelect.style.width = "32px";
+    genderSelect.style.height = "32px";
+    genderSelect.style.minWidth = "32px";
+    genderSelect.style.minHeight = "32px";
+    genderSelect.style.maxWidth = "32px";
+    genderSelect.style.maxHeight = "32px";
+    genderSelect.style.borderRadius = "6px";
+    genderSelect.style.display = "inline-block";
     [
       { value: "Female", label: "\u2640", color: "#ffb6d5" }, // pink
       { value: "Male", label: "\u2642", color: "#8ecaff" }, // blue
@@ -294,7 +319,8 @@ function renderTable(forceRebuildColumns = false) {
           ? "#8ecaff"
           : "";
     });
-    tdGender.append(genderSelect);
+    genderFlex.append(genderSelect);
+    tdGender.append(genderFlex);
     tr.append(tdGender);
     // Traits
     for (const trait of target.traits) {
@@ -415,6 +441,10 @@ function renderTable(forceRebuildColumns = false) {
     });
     // Delete
     const tdDel = document.createElement("td");
+    tdDel.style.width = "40px"; // fit contents
+    tdDel.style.maxWidth = "40px";
+    tdDel.style.minWidth = "40px";
+    tdDel.style.textAlign = "center";
     const delBtn = document.createElement("button");
     delBtn.className = "btn btn-danger btn-sm delete-horse";
     delBtn.setAttribute("data-idx", idx);
