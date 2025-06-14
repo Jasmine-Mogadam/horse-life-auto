@@ -4,6 +4,7 @@
 //   target: { name, size, gender, traits: [trait1, trait2, ...] },
 //   breeding: [ { name, size, gender, traits: {trait1: true/false, ...} }, ... ]
 // }
+import Horse from "./scripts/horse.js";
 
 const DATA_FILE = "horse-info.json";
 
@@ -46,6 +47,12 @@ async function loadApp() {
     appData = getDefaultData();
     await writeData(appData);
   }
+  // Convert breeding horses to Horse instances
+  if (Array.isArray(appData.breeding)) {
+    appData.breeding = appData.breeding.map((h) =>
+      h instanceof Horse ? h : Horse.fromObject(h)
+    );
+  }
   renderTable();
 }
 
@@ -75,16 +82,58 @@ let lastTraits = [];
 
 function buildTableColumns(target) {
   let html = "";
-  html += '<th style="width:80px">% Match</th>';
-  html += '<th style="width:120px"></th>'; // drag handle
-  html += '<th style="width:160px">Name</th>';
-  html += '<th style="width:120px">Size</th>';
-  html += '<th style="width:120px">Gender</th>';
+  html += '<th style="width:80px;font-size:13px;">% Match</th>';
+  html += '<th style="width:40px;font-size:13px;"></th>'; // drag handle
+  html += '<th style="width:110px;font-size:13px;">Name</th>';
+  html += '<th style="width:105px;font-size:13px;">Size</th>'; // slightly larger
+  html += '<th style="width:80px;font-size:13px;">Gender</th>'; // slightly smaller
   for (const trait of target.traits) {
-    html += `<th class="trait-header" style="width:120px">${trait}</th>`;
+    html += `<th class="trait-header" style="width:60px;word-break:break-word;white-space:normal;font-size:13px;">${trait}</th>`;
   }
-  html += '<th style="width:80px"></th>'; // delete btn
+  // Add body color headers here, before delete btn
+  for (const part of REQUIRED_BODY_PARTS) {
+    // Get color name and hex for the target horse
+    const colorName = target.bodyColors?.[part] || "";
+    const colorObj = colorOptions.find((c) => c.name === colorName);
+    const colorHex = colorObj ? colorObj.hex : "#fff";
+    // Add header cell with color swatch and name (smaller, unbolded)
+    html += `<th class="trait-header" style="width:60px;word-break:break-word;white-space:normal;font-size:13px; font-weight:normal;">
+      <div style='display:flex;flex-direction:column;align-items:center;gap:2px;'>
+        <span>${part} Color</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;">
+          <span style="display:inline-block;width:16px;height:16px;border:1px solid #ccc;background:${colorHex};margin-right:2px;"></span>
+          <span style='font-size:11px;font-weight:normal;'>${colorName}</span>
+        </span>
+      </div>
+    </th>`;
+  }
+  html += '<th style="width:80px;font-size:13px;"></th>'; // delete btn
   return html;
+}
+
+const REQUIRED_BODY_PARTS = [
+  "Coat Top",
+  "Coat Bottom",
+  "Hair",
+  "Hoof",
+  "Nose",
+  "Sock",
+  "Paint",
+  "Pattern",
+  "Keratin",
+];
+let colorOptions = [];
+
+// Fetch color options at startup
+(async function fetchColors() {
+  if (window.horseAPI && window.horseAPI.getColors) {
+    colorOptions = await window.horseAPI.getColors();
+  }
+})();
+
+function setTableScrollDivWidth(scrollDiv) {
+  // Remove explicit width, let it be 100%
+  scrollDiv.style.width = "";
 }
 
 function renderTable(forceRebuildColumns = false) {
@@ -112,70 +161,96 @@ function renderTable(forceRebuildColumns = false) {
   }
 
   // Clear container
-  container.innerHTML = '';
+  container.innerHTML = "";
   // Create scrollable div
-  const scrollDiv = document.createElement('div');
-  scrollDiv.style.overflowX = 'auto';
+  const scrollDiv = document.createElement("div");
+  //scrollDiv.style.overflowX = "auto";
+  // Do not set explicit width
+  setTableScrollDivWidth(scrollDiv);
   // Create table
-  const table = document.createElement('table');
-  table.className = 'table table-bordered align-middle';
-  table.style.minWidth = '1200px';
-  table.style.tableLayout = 'fixed';
-  table.style.width = '100%';
+  const table = document.createElement("table");
+  table.className = "table table-bordered align-middle";
+  table.style.minWidth = "1200px";
+  table.style.tableLayout = "fixed";
+  table.style.width = "100%";
   // Header
-  const thead = document.createElement('thead');
-  const headerRow = document.createElement('tr');
+  const thead = document.createElement("thead");
+  const headerRow = document.createElement("tr");
   // Columns
   headerRow.innerHTML = tableColumnsHtml;
+  // No need to append body color headers here anymore
   thead.append(headerRow);
   table.append(thead);
   // Body
-  const tbody = document.createElement('tbody');
-  tbody.id = 'breedingTableBody';
+  const tbody = document.createElement("tbody");
+  tbody.id = "breedingTableBody";
   breeding.forEach((horse, idx) => {
     // Calculate match percent
-    let match = 0, total = target.traits.length;
+    let match = 0;
+    let total = target.traits.length + 2 + REQUIRED_BODY_PARTS.length; // +2 for size/gender, +body parts
     for (const trait of target.traits) {
       if (horse.traits[trait]) match++;
     }
     if (horse.size === target.size) match++;
     if (horse.gender === target.gender) match++;
-    let percent = total > 0 ? (100 * match) / (total + 2) : 0;
+    // Count body color matches
+    REQUIRED_BODY_PARTS.forEach((part) => {
+      if (
+        (horse.bodyColors?.[part] || "") === (target.bodyColors?.[part] || "")
+      ) {
+        match++;
+      }
+    });
+    let percent = total > 0 ? (100 * match) / total : 0;
     // Color for percent cell
-    const bgColor = `background: linear-gradient(90deg, #fff ${100 - percent}%, #b6fcb6 ${percent}%);`;
-    const tr = document.createElement('tr');
-    tr.className = 'horse-row';
-    tr.setAttribute('data-idx', idx);
+    const bgColor = `background: linear-gradient(90deg, #fff ${
+      100 - percent
+    }%, #b6fcb6 ${percent}%);`;
+    const tr = document.createElement("tr");
+    tr.className = "horse-row";
+    tr.setAttribute("data-idx", idx);
     // % Match
-    const tdPercent = document.createElement('td');
+    const tdPercent = document.createElement("td");
     tdPercent.style = bgColor;
     tdPercent.innerHTML = `<b>${percent.toFixed(2)}%</b>`;
     tr.append(tdPercent);
     // Drag handle
-    const tdDrag = document.createElement('td');
-    tdDrag.className = 'draggable';
+    const tdDrag = document.createElement("td");
+    tdDrag.className = "draggable";
+    tdDrag.style.width = "40px"; // fit contents
     tdDrag.innerHTML = '<i class="fa fa-bars"></i>';
     tr.append(tdDrag);
     // Name
-    const tdName = document.createElement('td');
-    const nameInput = document.createElement('input');
-    nameInput.type = 'text';
-    nameInput.className = 'form-control form-control-sm';
+    const tdName = document.createElement("td");
+    tdName.style.width = "110px"; // shorter
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.className = "form-control form-control-sm";
     nameInput.value = horse.name;
-    nameInput.setAttribute('data-field', 'name');
-    nameInput.setAttribute('data-idx', idx);
+    nameInput.setAttribute("data-field", "name");
+    nameInput.setAttribute("data-idx", idx);
     tdName.append(nameInput);
     tr.append(tdName);
     // Size
-    const tdSize = document.createElement('td');
+    const tdSize = document.createElement("td");
+    tdSize.style.width = "105px"; // match header
     let sizeMatch = horse.size === target.size;
-    tdSize.style = sizeMatch ? 'background-color:#b6fcb6' : '';
-    const sizeSelect = document.createElement('select');
-    sizeSelect.className = 'form-select form-select-sm';
-    sizeSelect.setAttribute('data-field', 'size');
-    sizeSelect.setAttribute('data-idx', idx);
-    ["Big","Draft","Giant","Huge","Little","Normal","Small","Teeny"].forEach(opt => {
-      const o = document.createElement('option');
+    tdSize.style = sizeMatch ? "background-color:#b6fcb6" : "";
+    const sizeSelect = document.createElement("select");
+    sizeSelect.className = "form-select form-select-sm";
+    sizeSelect.setAttribute("data-field", "size");
+    sizeSelect.setAttribute("data-idx", idx);
+    [
+      "Big",
+      "Draft",
+      "Giant",
+      "Huge",
+      "Little",
+      "Normal",
+      "Small",
+      "Teeny",
+    ].forEach((opt) => {
+      const o = document.createElement("option");
       o.value = opt;
       o.textContent = opt;
       if (horse.size === opt) o.selected = true;
@@ -184,41 +259,165 @@ function renderTable(forceRebuildColumns = false) {
     tdSize.append(sizeSelect);
     tr.append(tdSize);
     // Gender
-    const tdGender = document.createElement('td');
+    const tdGender = document.createElement("td");
+    tdGender.style.width = "70px"; // match header
     let genderMatch = horse.gender === target.gender;
-    tdGender.style = genderMatch ? 'background-color:#b6fcb6' : '';
-    const genderSelect = document.createElement('select');
-    genderSelect.className = 'form-select form-select-sm';
-    genderSelect.setAttribute('data-field', 'gender');
-    genderSelect.setAttribute('data-idx', idx);
-    ["Female","Male"].forEach(opt => {
-      const o = document.createElement('option');
-      o.value = opt;
-      o.textContent = opt;
-      if (horse.gender === opt) o.selected = true;
+    tdGender.style = genderMatch ? "background-color:#b6fcb6" : "";
+    const genderSelect = document.createElement("select");
+    genderSelect.className = "form-select form-select-sm gender-select";
+    genderSelect.setAttribute("data-field", "gender");
+    genderSelect.setAttribute("data-idx", idx);
+    [
+      { value: "Female", label: "\u2640", color: "#ffb6d5" }, // pink
+      { value: "Male", label: "\u2642", color: "#8ecaff" }, // blue
+    ].forEach((opt) => {
+      const o = document.createElement("option");
+      o.value = opt.value;
+      o.textContent = opt.label;
+      if (horse.gender === opt.value) o.selected = true;
+      o.setAttribute("data-color", opt.color);
       genderSelect.append(o);
+    });
+    // Set initial background color
+    genderSelect.style.backgroundColor =
+      horse.gender === "Female"
+        ? "#ffb6d5"
+        : horse.gender === "Male"
+        ? "#8ecaff"
+        : "";
+    // Change color on select
+    genderSelect.addEventListener("change", function () {
+      this.style.backgroundColor =
+        this.value === "Female"
+          ? "#ffb6d5"
+          : this.value === "Male"
+          ? "#8ecaff"
+          : "";
     });
     tdGender.append(genderSelect);
     tr.append(tdGender);
     // Traits
     for (const trait of target.traits) {
-      const tdTrait = document.createElement('td');
-      let isMatch = horse.traits[trait] === true;
-      tdTrait.style = isMatch ? 'background-color:#b6fcb6' : '';
-      const cb = document.createElement('input');
-      cb.type = 'checkbox';
-      cb.setAttribute('data-field', 'trait');
-      cb.setAttribute('data-trait', trait);
-      cb.setAttribute('data-idx', idx);
-      if (isMatch) cb.checked = true;
-      tdTrait.append(cb);
+      const tdTrait = document.createElement("td");
+      tdTrait.style =
+        (horse.traits[trait] === true ? "background-color:#b6fcb6;" : "") +
+        "width:60px;"; // half size
+      // Flexbox centering for checkbox
+      const flexDiv = document.createElement("div");
+      flexDiv.style.display = "flex";
+      flexDiv.style.justifyContent = "center";
+      flexDiv.style.alignItems = "center";
+      flexDiv.style.width = "100%";
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.setAttribute("data-field", "trait");
+      cb.setAttribute("data-trait", trait);
+      cb.setAttribute("data-idx", idx);
+      if (horse.traits[trait] === true) cb.checked = true;
+      flexDiv.append(cb);
+      tdTrait.append(flexDiv);
       tr.append(tdTrait);
     }
+    // Body color dropdowns
+    if (!horse.bodyColors) horse.bodyColors = {};
+    REQUIRED_BODY_PARTS.forEach((part) => {
+      const td = document.createElement("td");
+      const match =
+        (horse.bodyColors[part] || "") === (target.bodyColors?.[part] || "");
+      td.style.backgroundColor = match ? "#b6fcb6" : "";
+      // Container for swatch and dropdown, flex column
+      const colorCol = document.createElement("div");
+      colorCol.style.display = "flex";
+      colorCol.style.flexDirection = "column";
+      colorCol.style.alignItems = "center";
+      colorCol.style.justifyContent = "center";
+      colorCol.style.gap = "2px";
+      colorCol.style.position = "relative"; // Ensure dropdown is positioned relative to this container
+      // Swatch as dropdown trigger
+      const swatchBtn = document.createElement("button");
+      swatchBtn.type = "button";
+      swatchBtn.style.display = "inline-block";
+      swatchBtn.style.width = "18px";
+      swatchBtn.style.height = "18px";
+      swatchBtn.style.border = "1px solid #ccc";
+      swatchBtn.style.background =
+        colorOptions.find((c) => c.name === horse.bodyColors[part])?.hex ||
+        "#fff";
+      swatchBtn.style.padding = "0";
+      swatchBtn.style.margin = "0";
+      swatchBtn.style.cursor = "pointer";
+      swatchBtn.style.borderRadius = "4px";
+      swatchBtn.style.position = "relative";
+      // Hidden dropdown absolutely positioned over the swatch
+      const select = document.createElement("select");
+      select.className = "form-select form-select-sm d-inline-block";
+      select.style.width = "60px";
+      select.style.fontSize = "12px";
+      select.style.position = "absolute";
+      select.style.left = "0";
+      select.style.top = "0";
+      select.style.zIndex = "10";
+      select.style.opacity = "0";
+      select.style.pointerEvents = "none";
+      select.setAttribute("data-body-part", part);
+      select.setAttribute("data-idx", idx);
+      colorOptions.forEach((opt) => {
+        const o = document.createElement("option");
+        o.value = opt.name;
+        o.textContent = opt.name;
+        if (horse.bodyColors[part] === opt.name) o.selected = true;
+        o.setAttribute("data-hex", opt.hex);
+        select.append(o);
+      });
+      // Show dropdown on swatch click
+      swatchBtn.addEventListener("click", function (e) {
+        select.style.opacity = "1";
+        select.style.pointerEvents = "auto";
+        select.focus();
+        swatchBtn.style.outline = "2px solid #888";
+      });
+      // Hide dropdown on blur
+      select.addEventListener("blur", function () {
+        select.style.opacity = "0";
+        select.style.pointerEvents = "none";
+        swatchBtn.style.outline = "none";
+      });
+      // Change color on select
+      select.addEventListener("change", async function () {
+        horse.bodyColors[part] = this.value;
+        swatchBtn.style.background =
+          colorOptions.find((c) => c.name === this.value)?.hex || "#fff";
+        select.style.opacity = "0";
+        select.style.pointerEvents = "none";
+        swatchBtn.style.outline = "none";
+        await writeData(appData);
+        renderTable();
+      });
+      // Position select absolutely over the swatch
+      swatchBtn.style.position = "relative";
+      select.style.left = "0";
+      select.style.top = "0";
+      select.style.margin = "0";
+      select.style.transform = "translateY(-2px)";
+      colorCol.append(swatchBtn);
+      colorCol.append(select);
+      // Color name in small text
+      const colorName = horse.bodyColors[part] || "";
+      const colorLabel = document.createElement("span");
+      colorLabel.textContent = colorName;
+      colorLabel.style.fontSize = "9px";
+      colorLabel.style.fontWeight = "normal";
+      colorLabel.style.marginTop = "1px";
+      colorLabel.style.wordBreak = "break-word";
+      colorCol.append(colorLabel);
+      td.append(colorCol);
+      tr.append(td);
+    });
     // Delete
-    const tdDel = document.createElement('td');
-    const delBtn = document.createElement('button');
-    delBtn.className = 'btn btn-danger btn-sm delete-horse';
-    delBtn.setAttribute('data-idx', idx);
+    const tdDel = document.createElement("td");
+    const delBtn = document.createElement("button");
+    delBtn.className = "btn btn-danger btn-sm delete-horse";
+    delBtn.setAttribute("data-idx", idx);
     delBtn.innerHTML = '<i class="fa fa-trash"></i>';
     tdDel.append(delBtn);
     tr.append(tdDel);
@@ -226,7 +425,7 @@ function renderTable(forceRebuildColumns = false) {
   });
   table.append(tbody);
   scrollDiv.append(table);
-  container.innerHTML = '';
+  container.innerHTML = "";
   container.append(scrollDiv);
   makeTableDraggable();
   // Restore focus/selection state
@@ -239,6 +438,16 @@ function renderTable(forceRebuildColumns = false) {
         el.setSelectionRange(focusInfo.selectionStart, focusInfo.selectionEnd);
       }
     }
+  }
+  // Update width on resize
+  if (!window._tableResizeListener) {
+    window._tableResizeListener = true;
+    window.addEventListener("resize", () => {
+      const scrollDiv = document.getElementById(
+        "horseTableContainer"
+      ).firstElementChild;
+      if (scrollDiv) setTableScrollDivWidth(scrollDiv);
+    });
   }
 }
 
@@ -261,12 +470,12 @@ function makeTableDraggable() {
 
 document.getElementById("addHorseBtn").addEventListener("click", async () => {
   const { target } = appData;
-  const newHorse = {
+  const newHorse = new Horse({
     name: "New Horse",
     size: target.size,
     gender: target.gender,
-    traits: Object.fromEntries(target.traits.map((t) => [t, false])),
-  };
+    traits: target.traits,
+  });
   appData.breeding.push(newHorse);
   await writeData(appData);
   renderTable();
@@ -278,10 +487,11 @@ document
     const idx = e.target.getAttribute("data-idx");
     const field = e.target.getAttribute("data-field");
     if (idx !== null && field) {
+      const horse = appData.breeding[idx];
       if (field === "name" || field === "size") {
-        appData.breeding[idx][field] = e.target.value;
+        horse[field] = e.target.value;
       } else if (field === "gender") {
-        appData.breeding[idx][field] = e.target.value;
+        horse[field] = e.target.value;
       }
       await writeData(appData);
       renderTable(); // Re-render to update colors and percent
@@ -295,7 +505,8 @@ document
     const field = e.target.getAttribute("data-field");
     if (idx !== null && field === "trait") {
       const trait = e.target.getAttribute("data-trait");
-      appData.breeding[idx].traits[trait] = e.target.checked;
+      const horse = appData.breeding[idx];
+      horse.setTrait(trait, e.target.checked);
       await writeData(appData);
       renderTable(); // Re-render to update colors and percent
     }
@@ -320,6 +531,53 @@ document.getElementById("settingsBtn").addEventListener("click", () => {
   showSettingsModal();
 });
 
+async function renderBodyColorsSettings() {
+  const container = document.getElementById("bodyColorsSettings");
+  container.innerHTML = "";
+  const bodyColors = appData.target.bodyColors || {};
+  REQUIRED_BODY_PARTS.forEach((part) => {
+    const row = document.createElement("div");
+    row.className = "d-flex align-items-center mb-2";
+    // Label
+    const label = document.createElement("label");
+    label.className = "me-2";
+    label.textContent = part;
+    label.style.width = "120px";
+    row.append(label);
+    // Color swatch
+    const swatch = document.createElement("span");
+    swatch.className = "me-2";
+    swatch.style.display = "inline-block";
+    swatch.style.width = "24px";
+    swatch.style.height = "24px";
+    swatch.style.border = "1px solid #ccc";
+    swatch.style.background =
+      bodyColors[part] && colorOptions.find((c) => c.name === bodyColors[part])
+        ? colorOptions.find((c) => c.name === bodyColors[part]).hex
+        : "#fff";
+    row.append(swatch);
+    // Dropdown
+    const select = document.createElement("select");
+    select.className = "form-select form-select-sm";
+    select.style.width = "200px";
+    select.setAttribute("data-body-part", part);
+    colorOptions.forEach((opt) => {
+      const o = document.createElement("option");
+      o.value = opt.name;
+      o.textContent = `${opt.name} (${opt.hex})`;
+      if (bodyColors[part] === opt.name) o.selected = true;
+      o.setAttribute("data-hex", opt.hex);
+      select.append(o);
+    });
+    select.addEventListener("change", function () {
+      swatch.style.background =
+        colorOptions.find((c) => c.name === this.value)?.hex || "#fff";
+    });
+    row.append(select);
+    container.append(row);
+  });
+}
+
 function showSettingsModal() {
   const { target } = appData;
   document.getElementById("targetName").value = target.name;
@@ -331,6 +589,7 @@ function showSettingsModal() {
     document.getElementById("targetGenderMale").checked = true;
   }
   renderTraitsList();
+  renderBodyColorsSettings();
   settingsModal.show();
 }
 
@@ -400,11 +659,16 @@ document
     )
       .map((input) => input.value.trim())
       .filter((val) => val.length > 0);
-    appData.target = { name, size, gender, traits };
+    // Get body colors
+    const bodyColors = {};
+    document.querySelectorAll("#bodyColorsSettings select").forEach((sel) => {
+      bodyColors[sel.getAttribute("data-body-part")] = sel.value;
+    });
+    appData.target = { name, size, gender, traits, bodyColors };
     // Update all breeding horses to have all traits
     for (const horse of appData.breeding) {
       for (const trait of traits) {
-        if (!(trait in horse.traits)) horse.traits[trait] = false;
+        if (!(trait in horse.traits)) horse.setTrait(trait, false);
       }
       for (const t in horse.traits) {
         if (!traits.includes(t)) delete horse.traits[t];

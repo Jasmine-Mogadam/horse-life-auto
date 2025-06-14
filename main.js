@@ -1,42 +1,68 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const path = require('path');
-const fs = require('fs');
+const { app, BrowserWindow, ipcMain } = require("electron");
+const path = require("path");
+const fs = require("fs");
 
-const DATA_FILE = path.join(__dirname, 'horse-info.json');
+const DATA_FILE = path.join(__dirname, "horse-info.json");
+const COLORS_FILE = path.join(__dirname, "colors.csv");
 
 function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
-      contextIsolation: true
-    }
+      contextIsolation: true,
+    },
   });
-  win.loadFile('index.html');
+  win.loadFile("index.html");
 }
 
 app.whenReady().then(() => {
   createWindow();
-  app.on('activate', function () {
+  app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit();
+app.on("window-all-closed", function () {
+  if (process.platform !== "darwin") app.quit();
 });
 
 // IPC handlers for reading/writing JSON
-ipcMain.handle('read-horse-info', async () => {
+ipcMain.handle("read-horse-info", async () => {
   try {
-    return fs.readFileSync(DATA_FILE, 'utf-8');
+    return fs.readFileSync(DATA_FILE, "utf-8");
   } catch (e) {
     return null;
   }
 });
-ipcMain.handle('write-horse-info', async (event, data) => {
-  fs.writeFileSync(DATA_FILE, data, 'utf-8');
+ipcMain.handle("write-horse-info", async (event, data) => {
+  fs.writeFileSync(DATA_FILE, data, "utf-8");
   return true;
+});
+
+function parseColorsCSV() {
+  try {
+    const csv = fs.readFileSync(COLORS_FILE, "utf-8");
+    return csv
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith("//"))
+      .map((line) => {
+        // Format: "#HEX (r, g, b)",Name
+        const match = line.match(/^"?(#[0-9A-Fa-f]{6})[^"\n]*"?,(.+)$/);
+        if (match) {
+          return { hex: match[1], name: match[2].trim() };
+        }
+        return null;
+      })
+      .filter(Boolean);
+  } catch (e) {
+    return [];
+  }
+}
+
+ipcMain.handle("get-colors", async () => {
+  return parseColorsCSV();
 });

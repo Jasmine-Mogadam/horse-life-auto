@@ -1,50 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Horse Breeding Planner</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <style>
-        .draggable {
-            cursor: grab;
-        }
-        .trait-header {
-            min-width: 120px;
-        }
-        .horse-row {
-            transition: background 0.2s;
-        }
-        .horse-row.dragging {
-            background: #f0f0f0;
-        }
+      .draggable {
+        cursor: grab;
+      }
+      .trait-header {
+        min-width: 120px;
+      }
+      .horse-row {
+        transition: background 0.2s;
+      }
+      .horse-row.dragging {
+        background: #f0f0f0;
+      }
     </style>
-</head>
-<body class="bg-light">
-    <div class="container py-4">
-        <h1 class="mb-4">Horse Breeding Planner</h1>
-        <div class="mb-4">
-            <button class="btn btn-primary" id="settingsBtn"><i class="fa fa-cog"></i> Target Horse Settings</button>
-        </div>
-        <div id="missingTraitsContainer" class="mb-3"></div>
-        <div id="horseTableContainer" class="table-responsive"></div>
-        <button class="btn btn-success mt-3" id="addHorseBtn"><i class="fa fa-plus"></i> Add Breeding Horse</button>
+  </head>
+  <body class="bg-light">
+    <div class="container">
+      <h1 class="mb-4">Horse Breeding Planner</h1>
+      <div class="mb-4">
+        <button class="btn btn-primary" id="settingsBtn">
+          <i class="fa fa-cog"></i> Target Horse Settings
+        </button>
+      </div>
+      <div id="missingTraitsContainer" class="mb-3"></div>
+      <div id="horseTableContainer" class="table-responsive"></div>
+      <button class="btn btn-success mt-3" id="addHorseBtn">
+        <i class="fa fa-plus"></i> Add Breeding Horse
+      </button>
     </div>
 
     <!-- Settings Modal -->
-    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+    <div
+      class="modal fade"
+      id="settingsModal"
+      tabindex="-1"
+      aria-labelledby="settingsModalLabel"
+      aria-hidden="true"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="settingsModalLabel">Target Horse Settings</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h5 class="modal-title" id="settingsModalLabel">
+              Target Horse Settings
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
           </div>
           <div class="modal-body">
             <form id="targetHorseForm">
               <div class="mb-3">
                 <label for="targetName" class="form-label">Name</label>
-                <input type="text" class="form-control" id="targetName" required>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="targetName"
+                  required
+                />
               </div>
               <div class="mb-3">
                 <label for="targetSize" class="form-label">Size</label>
@@ -63,12 +91,30 @@
                 <label class="form-label">Gender</label>
                 <div>
                   <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="targetGender" id="targetGenderFemale" value="Female" required>
-                    <label class="form-check-label" for="targetGenderFemale">Female</label>
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="targetGender"
+                      id="targetGenderFemale"
+                      value="Female"
+                      required
+                    />
+                    <label class="form-check-label" for="targetGenderFemale"
+                      >Female</label
+                    >
                   </div>
                   <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="targetGender" id="targetGenderMale" value="Male" required>
-                    <label class="form-check-label" for="targetGenderMale">Male</label>
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="targetGender"
+                      id="targetGenderMale"
+                      value="Male"
+                      required
+                    />
+                    <label class="form-check-label" for="targetGenderMale"
+                      >Male</label
+                    >
                   </div>
                 </div>
               </div>
@@ -76,15 +122,42 @@
                 <label class="form-label">Traits (drag to reorder)</label>
                 <ul class="list-group" id="traitsList"></ul>
                 <div class="input-group mt-2">
-                  <input type="text" class="form-control" id="newTraitInput" placeholder="Add trait">
-                  <button class="btn btn-outline-secondary" type="button" id="addTraitBtn">Add</button>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="newTraitInput"
+                    placeholder="Add trait"
+                  />
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    id="addTraitBtn"
+                  >
+                    Add
+                  </button>
                 </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Body Colors</label>
+                <div id="bodyColorsSettings"></div>
               </div>
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary" form="targetHorseForm">Save</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              form="targetHorseForm"
+            >
+              Save
+            </button>
           </div>
         </div>
       </div>
@@ -92,6 +165,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="app.js"></script>
-</body>
+    <script src="app.js" type="module"></script>
+  </body>
 </html>

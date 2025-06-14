@@ -1,10 +1,13 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer } = require("electron");
 
-contextBridge.exposeInMainWorld('horseAPI', {
+contextBridge.exposeInMainWorld("horseAPI", {
   read: async () => {
-    return await ipcRenderer.invoke('read-horse-info');
+    return await ipcRenderer.invoke("read-horse-info");
   },
   write: async (data) => {
-    return await ipcRenderer.invoke('write-horse-info', data);
-  }
+    return await ipcRenderer.invoke("write-horse-info", data);
+  },
+  getColors: async () => {
+    return await ipcRenderer.invoke("get-colors");
+  },
 });
