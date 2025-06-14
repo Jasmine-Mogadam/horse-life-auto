@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Electron: Main",
+      "program": "${workspaceFolder}/main.js",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+      },
+      "env": {},
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Electron: Hot Reload",
+      "program": "${workspaceFolder}/electron-watch.js",
+      "runtimeExecutable": null,
+      "env": {},
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

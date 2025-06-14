@@ -1,0 +1,18 @@
+{
+  "name": "horse-life-auto",
+  "version": "1.0.0",
+  "description": "Horse Breeding Planner App",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "node electron-watch.js",
+    "debug": "node electron-watch.js",
+    "electron": "electron ."
+  },
+  "devDependencies": {
+    "chokidar": "^4.0.3",
+    "electron": "^30.0.0",
+    "live-server": "^1.2.2",
+    "serve": "^14.2.0"
+  }
+}
