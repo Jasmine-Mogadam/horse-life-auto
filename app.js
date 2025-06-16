@@ -99,7 +99,7 @@ function buildTableColumns(target) {
     // Add header cell with color swatch and name (smaller, unbolded)
     html += `<th class="trait-header" style="width:60px;word-break:break-word;white-space:normal;font-size:13px; font-weight:normal;">
       <div style='display:flex;flex-direction:column;align-items:center;gap:2px;'>
-        <span>${part} Color</span>
+        <span>${part}</span>
         <span style="display:inline-flex;align-items:center;gap:4px;">
           <span style="display:inline-block;width:16px;height:16px;border:1px solid #ccc;background:${colorHex};margin-right:2px;"></span>
           <span style='font-size:11px;font-weight:normal;'>${colorName}</span>
@@ -387,7 +387,11 @@ function renderTable(forceRebuildColumns = false) {
       select.style.pointerEvents = "none";
       select.setAttribute("data-body-part", part);
       select.setAttribute("data-idx", idx);
-      colorOptions.forEach((opt) => {
+      // Sort color options alphabetically by name
+      const sortedColors = [...colorOptions].sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
+      sortedColors.forEach((opt) => {
         const o = document.createElement("option");
         o.value = opt.name;
         o.textContent = opt.name;
