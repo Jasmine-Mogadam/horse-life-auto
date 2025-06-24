@@ -34,6 +34,3 @@ export default class Horse {
     return new Horse(obj);
   }
 }
-
-// Export for browser global usage
-window.Horse = Horse;

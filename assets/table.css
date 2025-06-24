@@ -1,0 +1,214 @@
+/* Table and Horse Row Styles */
+
+:root {
+  --match-bg: #b6fcb6;
+  --gender-female: #ffb6d5;
+  --gender-male: #8ecaff;
+  --swatch-border: #ccc;
+}
+
+.table {
+  min-width: 100rem;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.table-bordered {
+  border: 1px solid #dee2e6;
+}
+
+.align-middle td,
+.align-middle th {
+  vertical-align: middle;
+}
+
+.table th {
+  font-size: 0.75rem;
+  padding-left: 0.25rem;
+}
+
+.trait-header {
+  width: 4rem;
+  word-break: break-word;
+  white-space: normal;
+  font-weight: normal;
+}
+
+.no-dropdown-arrow {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 0 !important;
+  background: none;
+}
+
+.horse-row {
+  transition: background 0.2s;
+}
+
+.horse-row.dragging {
+  background: #f0f0f0;
+}
+
+.horse-row .draggable {
+  cursor: grab;
+}
+
+.horse-row .size-match {
+  background-color: var(--match-bg);
+}
+
+.horse-row .gender-match {
+  background-color: var(--match-bg);
+}
+
+.horse-row .trait-match {
+  background-color: var(--match-bg);
+}
+
+.horse-row .bodycolor-match {
+  background-color: var(--match-bg);
+}
+
+.gender-select-female {
+  background-color: var(--gender-female) !important;
+}
+
+.gender-select-male {
+  background-color: var(--gender-male) !important;
+}
+
+.gender-cell {
+  width: 1rem;
+}
+
+.gender-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.color-swatch {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid var(--swatch-border);
+  margin-right: 0.125rem;
+  border-radius: 4px;
+  background: var(--swatch-bg, #fff);
+}
+
+.color-dropdown {
+  width: 3.75rem;
+  font-size: 0.75rem;
+}
+
+.table th[style],
+.table td[style] {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+.match-header {
+  width: 4.5rem;
+  font-size: 1.1rem;
+}
+
+.drag-header {
+  width: 2.5rem;
+}
+
+.draggable {
+  cursor: grab;
+}
+
+.name-header {
+  width: 7rem;
+}
+
+.size-header {
+  width: 7rem;
+}
+
+.gender-header {
+  width: 3.5rem;
+}
+
+.delete-header {
+  width: 3rem;
+}
+
+.body-part-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0rem;
+}
+
+.body-part-color-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0rem;
+}
+
+.body-part-color-label {
+  font-size: 0.5rem;
+  font-weight: normal;
+}
+
+.drag-cell {
+  width: 2.5rem;
+  min-width: 2.5rem;
+  max-width: 2.5rem;
+  text-align: center;
+}
+
+.name-cell {
+  width: 6.875rem;
+}
+
+.size-cell {
+  width: 6.5625rem;
+}
+
+.trait-cell {
+  min-width: 3.75rem;
+}
+
+.bodycolor-cell {
+  min-width: 3.75rem;
+}
+
+.color-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  position: relative;
+}
+
+.color-dropdown-absolute {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  margin: 0;
+  transform: translateY(-0.125rem);
+}
+
+.delete-cell {
+  width: 2.5rem;
+  min-width: 2.5rem;
+  max-width: 2.5rem;
+  text-align: center;
+}
+
+.text-center {
+  text-align: center;
+}

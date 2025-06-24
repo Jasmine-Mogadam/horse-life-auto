@@ -442,7 +442,7 @@ function renderD3Tree(treeData) {
     .append("circle")
     .attr("fill", (d) => {
       // If the node is a color (not a combo), use its hex
-      const colorObj = colorOptions.find(c => c.name === d.data.name);
+      const colorObj = colorOptions.find((c) => c.name === d.data.name);
       if (colorObj) return colorObj.hex;
       return d.children ? "#b6fcb6" : "#fff";
     })
