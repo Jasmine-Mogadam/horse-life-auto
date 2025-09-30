@@ -6,8 +6,8 @@ let electronProcess = null;
 
 const electronPath =
   process.platform === "win32"
-    ? path.join(__dirname, "node_modules", ".bin", "electron.cmd")
-    : path.join(__dirname, "node_modules", ".bin", "electron");
+    ? path.join(__dirname, "..", "node_modules", ".bin", "electron.cmd")
+    : path.join(__dirname, "..", "node_modules", ".bin", "electron");
 
 function startElectron() {
   if (electronProcess) {
@@ -24,17 +24,24 @@ function startElectron() {
 }
 
 function actuallyStartElectron() {
-  electronProcess = spawn(electronPath, ["."], { stdio: "inherit" });
+  electronProcess = spawn(electronPath, ["."], {
+    stdio: "inherit",
+    cwd: __dirname,
+  });
   electronProcess.on("exit", (code) => {
     electronProcess = null;
   });
 }
 
 // Watch for changes except horse-info.json
-const watcher = chokidar.watch(["*.js", "*.html", "!horse-info.json"], {
-  ignored: /(^|[\/\\])\../, // ignore dotfiles
-  persistent: true,
-});
+const watcher = chokidar.watch(
+  ["*.js", "*.html", "assets/*", "scripts/**/*", "!data/horse-info.json"],
+  {
+    ignored: /(^|[\/\\])\../, // ignore dotfiles
+    persistent: true,
+    cwd: __dirname,
+  }
+);
 
 watcher.on("ready", () => {
   startElectron();

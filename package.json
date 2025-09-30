@@ -2,11 +2,11 @@
   "name": "horse-life-auto",
   "version": "1.0.0",
   "description": "Horse Breeding Planner App",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
     "start": "electron .",
-    "dev": "node electron-watch.js",
-    "debug": "node electron-watch.js",
+    "dev": "node src/electron-watch.js",
+    "debug": "node src/electron-watch.js",
     "electron": "electron ."
   },
   "devDependencies": {

@@ -2,9 +2,9 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
 
-const DATA_FILE = path.join(__dirname, "horse-info.json");
+const DATA_FILE = path.join(__dirname, "data/horse-info.json");
 const COLORS_FILE = path.join(__dirname, "./data/colors.csv");
-const COLOR_COMBOS_FILE = path.join(__dirname, "color-combos.json");
+const COLOR_COMBOS_FILE = path.join(__dirname, "data/color-combos.json");
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -16,7 +16,7 @@ function createWindow() {
       contextIsolation: true,
     },
   });
-  win.loadFile("index.html");
+  win.loadFile(path.join(__dirname, "index.html"));
 }
 
 app.whenReady().then(() => {

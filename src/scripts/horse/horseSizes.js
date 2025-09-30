@@ -1,4 +1,3 @@
-// scripts/horseSizes.js
 // Centralized horse size dropdown for reuse
 
 export const HORSE_SIZES = [

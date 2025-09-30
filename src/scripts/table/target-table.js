@@ -1,7 +1,6 @@
-// target-table.js
 // Handles rendering and logic for the breeding horses table
 
-import createHorseSizeDropdown from "./horseSizes.js";
+import createHorseSizeDropdown from "../horse/horseSizes.js";
 
 let appDataRef;
 let writeDataRef;
@@ -428,7 +427,7 @@ function renderMissingTraits() {
 
 async function onAddHorse() {
   const { target } = appDataRef;
-  const newHorse = new (await import("./horse.js")).default({
+  const newHorse = new (await import("../horse/horse.js")).default({
     name: "New Horse",
     size: target.size,
     gender: target.gender,

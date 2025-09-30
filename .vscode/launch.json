@@ -5,7 +5,7 @@
       "type": "node",
       "request": "launch",
       "name": "Electron: Main",
-      "program": "${workspaceFolder}/main.js",
+      "program": "${workspaceFolder}/src/main.js",
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
       "windows": {
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
@@ -17,7 +17,7 @@
       "type": "node",
       "request": "launch",
       "name": "Electron: Hot Reload",
-      "program": "${workspaceFolder}/electron-watch.js",
+      "program": "${workspaceFolder}/src/electron-watch.js",
       "runtimeExecutable": null,
       "env": {},
       "cwd": "${workspaceFolder}"

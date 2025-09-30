@@ -1,7 +1,7 @@
 // Settings modal logic for Horse Breeding Planner
 // This module handles the settings modal, traits editing, and body color settings
 
-import createHorseSizeDropdown from "./horseSizes.js";
+import createHorseSizeDropdown from "./horse/horseSizes.js";
 
 let appDataRef;
 let writeDataRef;
@@ -19,7 +19,7 @@ function initSettings(
 ) {
   // Inject the settings modal HTML if not present
   if (!document.getElementById("settingsModal")) {
-    fetch("assets/settings-modal.html")
+    fetch("./assets/settings-modal.html")
       .then((res) => res.text())
       .then((html) => {
         const temp = document.createElement("div");

@@ -4,12 +4,12 @@
 //   target: { name, size, gender, traits: [trait1, trait2, ...] },
 //   breeding: [ { name, size, gender, traits: {trait1: true/false, ...} }, ... ]
 // }
-import Horse from "./scripts/horse.js";
+import Horse from "./scripts/horse/horse.js";
 import initSettings from "./scripts/settings.js";
 import {
   initTargetTable,
   renderTable as renderTargetTable,
-} from "./scripts/target-table.js";
+} from "./scripts/table/target-table.js";
 
 const DATA_FILE = "horse-info.json";
 
