@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 
 const DATA_FILE = path.join(__dirname, "horse-info.json");
-const COLORS_FILE = path.join(__dirname, "colors.csv");
+const COLORS_FILE = path.join(__dirname, "./data/colors.csv");
 const COLOR_COMBOS_FILE = path.join(__dirname, "color-combos.json");
 
 function createWindow() {

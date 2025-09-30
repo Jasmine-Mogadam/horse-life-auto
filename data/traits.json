@@ -1,0 +1,446 @@
+{
+  "eyes": [
+    {
+      "name": "Dark Blue",
+      "inheritChance": 0.15
+    },
+    {
+      "name": "Tan Brown",
+      "inheritChance": 0.75
+    },
+    {
+      "name": "Dark Purple",
+      "inheritChance": 0.025
+    },
+    {
+      "name": "Dark Brown",
+      "inheritChance": 0.75
+    },
+    {
+      "name": "Dark Green",
+      "inheritChance": 0.35
+    },
+    {
+      "name": "Vibrant Dark Brown",
+      "inheritChance": 0.75
+    },
+    {
+      "name": "Truffle",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Crystal Blue",
+      "inheritChance": 0.15
+    },
+    {
+      "name": "Brown",
+      "inheritChance": 0.75
+    },
+    {
+      "name": "Deep Blue",
+      "inheritChance": 0.1
+    },
+    {
+      "name": "Ocean",
+      "inheritChance": 0.2
+    },
+    {
+      "name": "Blue",
+      "inheritChance": 0.25
+    },
+    {
+      "name": "Yellow",
+      "inheritChance": 0.01
+    },
+    {
+      "name": "Light Gray",
+      "inheritChance": 0.35
+    },
+    {
+      "name": "Dull Brown",
+      "inheritChance": 0.75
+    },
+    {
+      "name": "Purple",
+      "inheritChance": 0.025
+    },
+    {
+      "name": "Light Purple",
+      "inheritChance": 0.025
+    },
+    {
+      "name": "Lime Green",
+      "inheritChance": 0.15
+    },
+    {
+      "name": "Olive Green",
+      "inheritChance": 0.45
+    }
+  ],
+  "paint": [
+    {
+      "name": "Head Stripe",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Overo",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Tobiano",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Irregular Blaze",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Eye Stripes",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Snip Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Sabino Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Full Mask Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Thigh Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Small Hind Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Streaking Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Heavy Underbelly Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Chimera Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Broken Stripe Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Badger Splash",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Heart",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Banded",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Sprinkled Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Front Body Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Framed Face Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Asymmetrical Front Sock",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Belly Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Asymmetrical Back Sock",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Rear Snowcap",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Neck Strip",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Back Leg Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Upper Body Paint",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Shoulder Paint Marks",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Framed Paint",
+      "inheritChance": 0.25
+    }
+  ],
+  "patterm": [
+    {
+      "name": "Latte Swirl",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Zig Zag Stripe Mask",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Broken Front Chimera",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Stretching Dapples",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Big Spots",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Peacock Appaloosa",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Streaking Spots",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Zig Zag Stripes",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Head Diamond",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Freckling",
+      "inheritChance": 0.4
+    },
+    {
+      "name": "Rippled Cover",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Hind Spots",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Heavy Hind Spots",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Streaked Spots",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Face Streaking Dapple",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Heavy Dapple",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Nose Freckles",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Leopard Spots",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Knee Stripe",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Striped Ankles",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Facial Freckles",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Back Stripe",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Belly Dapple",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Back Patch",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Neck Stripes",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Primal Stripes",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Limb Spots",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Corrupted",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Body Stripe Streaks",
+      "inheritChance": 0.4
+    },
+    {
+      "name": "Spots",
+      "inheritChance": 0.4
+    }
+  ],
+  "cosmetics": [
+    {
+      "name": "Full Beard",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Thigh Floof",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Neck Fur",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Short Ankle Fur",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Short Beard",
+      "inheritChance": 0.35
+    },
+    {
+      "name": "Wavy Hoof Fur",
+      "inheritChance": 0.35
+    },
+    {
+      "name": "Wide Ankle Fur",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Heavy Hoof Fur",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Fluffy Ears",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Ankle Fur",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Whispy Ankle Fur",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Layered Hoof Fur",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Eyelashes",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Short Belly Fur",
+      "inheritChance": 0.35
+    },
+    {
+      "name": "Feathered Fur Ankles",
+      "inheritChance": 0.5
+    }
+  ],
+  "mane": [
+    {
+      "name": "Wavy Long Mane",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Shaggy Mane",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Fluffy Mane",
+      "inheritChance": 0.25
+    },
+    {
+      "name": "Basic Mane",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Wavy Short Mane",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Roached Mane",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Long Mane",
+      "inheritChance": 0.25
+    }
+  ],
+  "tail": [
+    {
+      "name": "Flowing Tail",
+      "inheritChance": 0.25
+    },
+    {
+      "name": "Wavy Short Tail",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Wavy Long Tail",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Shaggy Tail",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Medium Tail",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Short Chop Tail",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Long Chop Tail",
+      "inheritChance": 0.5
+    },
+    {
+      "name": "Sleek Straight Tail",
+      "inheritChance": 0.5
+    }
+  ]
+}
