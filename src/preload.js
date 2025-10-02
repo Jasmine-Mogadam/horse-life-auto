@@ -10,4 +10,13 @@ contextBridge.exposeInMainWorld("horseAPI", {
   getColors: async () => {
     return await ipcRenderer.invoke("get-colors");
   },
+  takeScreenshot: async () => {
+    return await ipcRenderer.invoke("take-screenshot");
+  },
+  getTraits: async () => {
+    return await ipcRenderer.invoke("get-traits");
+  },
+  sendCropSelection: (rect) => {
+    ipcRenderer.send("crop-selection", rect);
+  },
 });

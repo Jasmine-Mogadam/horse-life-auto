@@ -47,6 +47,7 @@ function getDefaultData() {
 let appData = null;
 
 let colorOptions = [];
+let traitOptions = {};
 
 async function loadApp() {
   appData = await readData();
@@ -64,8 +65,17 @@ async function loadApp() {
   if (window.horseAPI && window.horseAPI.getColors) {
     colorOptions = await window.horseAPI.getColors();
   }
+  if (window.horseAPI && window.horseAPI.getTraits) {
+    traitOptions = await window.horseAPI.getTraits();
+  }
   // Initialize table logic after appData and colorOptions are loaded
-  initTargetTable(appData, writeData, colorOptions, REQUIRED_BODY_PARTS);
+  initTargetTable(
+    appData,
+    writeData,
+    colorOptions,
+    REQUIRED_BODY_PARTS,
+    traitOptions
+  );
   renderTargetTable();
   // Initialize settings logic after appData and colorOptions are loaded
   initSettings(
@@ -73,7 +83,8 @@ async function loadApp() {
     writeData,
     renderTargetTable,
     colorOptions,
-    REQUIRED_BODY_PARTS
+    REQUIRED_BODY_PARTS,
+    traitOptions
   );
 }
 

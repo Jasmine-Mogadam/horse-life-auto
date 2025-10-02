@@ -1,82 +1,62 @@
-// main.js (Main Process)
-const { app, BrowserWindow, ipcMain, desktopCapturer } = require("electron");
-const Tesseract = require("tesseract.js");
+async function captureAndRecognize(traits) {
+  // 1. Trigger screenshot from the main process
+  const imagePath = await window.horseAPI.takeScreenshot();
+  if (!imagePath) {
+    return null;
+  }
 
-let mainWindow;
+  // 2. Use Tesseract.js to recognize text
+  const {
+    data: { text },
+  } = await Tesseract.recognize(
+    imagePath,
+    "eng",
+    { logger: (m) => console.log(m) } // for debugging
+  );
 
-async function initializeOCR() {
-  // Initialize Tesseract worker
-  await Tesseract.createEngine({
-    logger: (m) => console.log(m),
-  });
+  // 3. Parse the text to extract traits
+  const horseTraits = parseTraits(text, traits);
+
+  return horseTraits;
 }
-initializeOCR();
 
-async function captureAndExtractText() {
-  try {
-    // Get available sources (windows/screens)
-    const sources = await desktopCapturer.getSources({
-      types: ["screen"],
-      thumbnailSize: { width: 1920, height: 1080 },
-    });
+function parseTraits(text, traits) {
+  const lines = text.split("\n");
+  const foundTraits = {};
+  // First letter is the horse name
+  const name = lines[0];
 
-    // Show selection dialog
-    const { response } = await electron.dialog.showOpenDialog(mainWindow, {
-      title: "Select Region",
-      properties: ["openFile"],
-    });
+  // Colors are the next part, from top left to bottom right
+  // COAT TOP
+  // COAT BOTTOM
+  // HAIR (row end)
+  // HOOF
+  // NOSE
+  // SOCK (row end)
+  // PAINT
+  // PATTERN
+  // KERATIN (row end)
 
-    if (!response || response.length === 0) {
-      throw new Error("No region selected");
-    }
+  // The bottom part is the rest of the horse traits
+  const allTraits = [
+    ...traits.eyes,
+    ...traits.paint,
+    ...traits.patterm,
+    ...traits.cosmetics,
+    ...traits.mane,
+    ...traits.tail,
+  ].map((trait) => trait.name.toLowerCase());
 
-    // Capture selected region
-    const source = sources[0]; // Use first screen
-    const screenshot = await desktopCapturer.getSources({
-      types: ["screen"],
-      thumbnailSize: { width: source.width, height: source.height },
-    });
-
-    // Extract text using Tesseract
-    const result = await Tesseract.recognize(
-      screenshot[0].thumbnail.toDataURL(),
-      "eng",
-      {
-        logger: (m) => console.log(m),
-        langPath: path.join(__dirname, "tessdata"),
+  for (const line of lines) {
+    const lowerLine = line.toLowerCase();
+    for (const trait of allTraits) {
+      if (lowerLine.includes(trait)) {
+        foundTraits[trait] = true;
       }
-    );
-
-    return result.data.text;
-  } catch (error) {
-    console.error("Error:", error);
-    throw error;
+    }
   }
+
+  return foundTraits;
 }
 
-// Handle requests from renderer
-ipcMain.handle("capture-and-extract", async () => {
-  return await captureAndExtractText();
-});
-
-// renderer.js
-const { ipcRenderer } = require("electron");
-
-async function captureAndExtractText() {
-  try {
-    const extractedText = await ipcRenderer.invoke("capture-and-extract");
-    console.log("Extracted text:", extractedText);
-    return extractedText;
-  } catch (error) {
-    console.error("Error extracting text:", error);
-    throw error;
-  }
-}
-
-// Example usage in your UI
-document
-  .getElementById("capture-button")
-  .addEventListener("click", async () => {
-    const extractedText = await captureAndExtractText();
-    document.getElementById("result-textarea").value = extractedText;
-  });
+export { captureAndRecognize };

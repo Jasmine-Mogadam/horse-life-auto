@@ -1,11 +1,13 @@
 // Handles rendering and logic for the breeding horses table
 
 import createHorseSizeDropdown from "../horse/horseSizes.js";
+import { captureAndRecognize } from "../screenshotAdd.js";
 
 let appDataRef;
 let writeDataRef;
 let colorOptionsRef;
 let REQUIRED_BODY_PARTS_REF;
+let traitOptionsRef;
 
 let tableColumnsHtml = "";
 let lastTraits = [];
@@ -14,12 +16,14 @@ export function initTargetTable(
   appData,
   writeData,
   colorOptions,
-  REQUIRED_BODY_PARTS
+  REQUIRED_BODY_PARTS,
+  traitOptions
 ) {
   appDataRef = appData;
   writeDataRef = writeData;
   colorOptionsRef = colorOptions;
   REQUIRED_BODY_PARTS_REF = REQUIRED_BODY_PARTS;
+  traitOptionsRef = traitOptions;
 
   document.getElementById("addHorseBtn").addEventListener("click", onAddHorse);
   document
@@ -174,23 +178,45 @@ export function renderTable(forceRebuildColumns = false) {
     tdGender.append(genderFlex);
     tr.append(tdGender);
     // Traits
-    for (const trait of target.traits) {
+    const traitTypes = [
+      { name: "Paint", max: 2 },
+      { name: "Pattern", max: 4 },
+      { name: "Cosmetic", max: 4 },
+      { name: "Eye Color", max: 1 },
+      { name: "Mane", max: 1 },
+      { name: "Tail", max: 1 },
+    ];
+
+    const horseTraits = [];
+    for (const traitType of traitTypes) {
+      const traits = horse.traits[traitType.name] || [];
+      for (let i = 0; i < traitType.max; i++) {
+        horseTraits.push({
+          type: traitType.name,
+          value: traits[i] || "",
+          index: i,
+        });
+      }
+    }
+
+    const targetTraits = target.traits;
+    horseTraits.sort((a, b) => {
+      const aIsTarget = targetTraits.includes(a.value);
+      const bIsTarget = targetTraits.includes(b.value);
+      if (aIsTarget && !bIsTarget) {
+        return -1;
+      }
+      if (!aIsTarget && bIsTarget) {
+        return 1;
+      }
+      return 0;
+    });
+
+    for (const trait of horseTraits) {
       const tdTrait = document.createElement("td");
-      tdTrait.classList.toggle("trait-match", horse.traits[trait] === true);
       tdTrait.classList.add("trait-cell");
-      const flexDiv = document.createElement("div");
-      flexDiv.style.display = "flex";
-      flexDiv.style.justifyContent = "center";
-      flexDiv.style.alignItems = "center";
-      flexDiv.style.width = "100%";
-      const cb = document.createElement("input");
-      cb.type = "checkbox";
-      cb.setAttribute("data-field", "trait");
-      cb.setAttribute("data-trait", trait);
-      cb.setAttribute("data-idx", idx);
-      if (horse.traits[trait] === true) cb.checked = true;
-      flexDiv.append(cb);
-      tdTrait.append(flexDiv);
+      const select = createTraitDropdown(horse, trait.type, trait.index, idx);
+      tdTrait.append(select);
       tr.append(tdTrait);
     }
     // Body color dropdowns
@@ -346,11 +372,22 @@ function buildTableColumns(target) {
   thGender.textContent = "Gender";
   fragment.appendChild(thGender);
 
-  for (const trait of target.traits) {
-    const thTrait = document.createElement("th");
-    thTrait.className = "trait-header";
-    thTrait.textContent = trait;
-    fragment.appendChild(thTrait);
+  const traitTypes = [
+    { name: "Paint", max: 2 },
+    { name: "Pattern", max: 4 },
+    { name: "Cosmetic", max: 4 },
+    { name: "Eye Color", max: 1 },
+    { name: "Mane", max: 1 },
+    { name: "Tail", max: 1 },
+  ];
+
+  for (const traitType of traitTypes) {
+    for (let i = 0; i < traitType.max; i++) {
+      const thTrait = document.createElement("th");
+      thTrait.className = "trait-header";
+      thTrait.textContent = `${traitType.name} ${i + 1}`;
+      fragment.appendChild(thTrait);
+    }
   }
   for (const part of REQUIRED_BODY_PARTS_REF) {
     const thPart = document.createElement("th");
@@ -391,6 +428,37 @@ function setTableScrollDivWidth(scrollDiv) {
   scrollDiv.style.width = "";
 }
 
+function createTraitDropdown(horse, traitType, index, rowIndex) {
+  const select = document.createElement("select");
+  select.className = "form-select form-select-sm";
+  select.setAttribute("data-field", "trait");
+  select.setAttribute("data-trait-type", traitType);
+  select.setAttribute("data-trait-index", index);
+  select.setAttribute("data-idx", rowIndex);
+
+  const emptyOption = document.createElement("option");
+  emptyOption.value = "";
+  emptyOption.textContent = `Select ${traitType}`;
+  select.append(emptyOption);
+
+  const traitKey = traitType.toLowerCase().replace(" ", "");
+  const options = traitOptionsRef[traitKey] || [];
+
+  for (const option of options) {
+    const opt = document.createElement("option");
+    opt.value = option.name;
+    opt.textContent = option.name;
+    select.append(opt);
+  }
+
+  const horseTrait = horse.traits[traitType]?.[index];
+  if (horseTrait) {
+    select.value = horseTrait;
+  }
+
+  return select;
+}
+
 function makeTableDraggable() {
   const tbody = document.getElementById("breedingTableBody");
   if (!tbody) return;
@@ -426,16 +494,21 @@ function renderMissingTraits() {
 }
 
 async function onAddHorse() {
-  const { target } = appDataRef;
-  const newHorse = new (await import("../horse/horse.js")).default({
-    name: "New Horse",
-    size: target.size,
-    gender: target.gender,
-    traits: target.traits,
-  });
-  appDataRef.breeding.push(newHorse);
-  await writeDataRef(appDataRef);
-  renderTable();
+  const traits = await window.horseAPI.getTraits();
+  const horseTraits = await captureAndRecognize(traits);
+
+  if (horseTraits) {
+    const { target } = appDataRef;
+    const newHorse = new (await import("../horse/horse.js")).default({
+      name: "New Horse",
+      size: target.size,
+      gender: target.gender,
+      traits: horseTraits,
+    });
+    appDataRef.breeding.push(newHorse);
+    await writeDataRef(appDataRef);
+    renderTable();
+  }
 }
 
 async function onTableInput(e) {
@@ -460,9 +533,13 @@ async function onTableChange(e) {
   const idx = e.target.getAttribute("data-idx");
   const field = e.target.getAttribute("data-field");
   if (idx !== null && field === "trait") {
-    const trait = e.target.getAttribute("data-trait");
+    const traitType = e.target.getAttribute("data-trait-type");
+    const traitIndex = e.target.getAttribute("data-trait-index");
     const horse = appDataRef.breeding[idx];
-    horse.setTrait(trait, e.target.checked);
+    if (!horse.traits[traitType]) {
+      horse.traits[traitType] = [];
+    }
+    horse.traits[traitType][traitIndex] = e.target.value;
     await writeDataRef(appDataRef);
     renderTable();
   }

@@ -134,7 +134,6 @@ function renderBodyColorsSettings() {
 
 function showSettingsModal() {
   const { target } = appDataRef;
-  document.getElementById("targetName").value = target.name;
   document.getElementById("targetSize").value = target.size;
   // Set gender radio
   if (target.gender === "Female") {
@@ -199,7 +198,6 @@ function removeTraitHandler(e) {
 
 async function submitSettingsForm(e) {
   e.preventDefault();
-  const name = document.getElementById("targetName").value.trim();
   const size = document.getElementById("targetSize").value;
   // Get gender from radio
   const gender = document.querySelector(
@@ -216,7 +214,7 @@ async function submitSettingsForm(e) {
   document.querySelectorAll("#bodyColorsSettings select").forEach((sel) => {
     bodyColors[sel.getAttribute("data-body-part")] = sel.value;
   });
-  appDataRef.target = { name, size, gender, traits, bodyColors };
+  appDataRef.target = { size, gender, traits, bodyColors };
   // Update all breeding horses to have all traits
   for (const horse of appDataRef.breeding) {
     for (const trait of traits) {

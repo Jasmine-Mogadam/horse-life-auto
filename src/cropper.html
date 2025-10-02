@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Crop Selection</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+      }
+      #crop-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        cursor: crosshair;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="crop-canvas"></canvas>
+    <script src="./scripts/cropper.js"></script>
+  </body>
+</html>
