@@ -2,16 +2,42 @@
   "name": "horse-life-auto",
   "version": "1.0.0",
   "description": "Horse Breeding Planner App",
+  "author": "Jasmine Mogadam",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
     "dev": "node src/electron-watch.js",
     "debug": "node src/electron-watch.js",
-    "electron": "electron ."
+    "electron": "electron .",
+    "build": "electron-builder build",
+    "build:mac": "electron-builder build --mac",
+    "build:win": "electron-builder build --win",
+    "build:linux": "electron-builder build --linux"
+  },
+  "build": {
+    "appId": "com.horselife.auto",
+    "productName": "Horse Life Auto",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   },
   "devDependencies": {
     "chokidar": "^4.0.3",
     "electron": "^30.0.0",
+    "electron-builder": "^24.6.4",
     "live-server": "^1.2.2",
     "serve": "^14.2.0",
     "tesseract.js": "^6.0.1"
