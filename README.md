@@ -17,9 +17,9 @@ Be warned, the artifacts (things you download to actually run this) are unsigned
 
 You can download the latest version for your operating system from the releases page:
 
-- [Windows (.exe)](../../releases/latest)
-- [macOS (.dmg)](../../releases/latest)
-- [Linux (.AppImage)](../../releases/latest)
+- [Windows (.exe)](../../releases/latest) | [![Downloads](https://img.shields.io/github/downloads/Jasmine-Mogadam/horse-life-auto/total)]
+- [macOS (.dmg)](../../releases/latest) | [![Downloads](https://img.shields.io/github/downloads/Jasmine-Mogadam/horse-life-auto/total)]
+- [Linux (.AppImage)](../../releases/latest) | [![Downloads](https://img.shields.io/github/downloads/Jasmine-Mogadam/horse-life-auto/total)]
 
 Or you can build it from source.
 
