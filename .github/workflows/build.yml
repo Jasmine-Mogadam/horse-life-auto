@@ -3,8 +3,12 @@ name: Build Horse Life Auto
 on:
   push:
     branches: [main]
+    tags:
+      - "v1.*"
   pull_request:
     branches: [main]
+    tags:
+      - "pre-v1.*"
   workflow_dispatch: {}
 
 jobs:
