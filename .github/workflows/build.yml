@@ -58,8 +58,17 @@ jobs:
   release:
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: *-build
+          path: dist
+          merge-multiple: true
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
