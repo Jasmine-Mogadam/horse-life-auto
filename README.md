@@ -77,6 +77,20 @@ npm run build:linux  # For Linux (.AppImage)
 
 The built applications will be available in the `dist` directory.
 
+## Troubleshooting
+
+### "App is damaged and can't be opened" (macOS)
+
+Because this app is not digitally signed (which requires a paid Apple Developer account), macOS may block it from running. To fix this:
+
+1.  Move the app to your `Applications` folder.
+2.  Open Terminal.
+3.  Run the following command:
+    ```bash
+    xattr -cr /Applications/Horse\ Life\ Auto.app
+    ```
+4.  You should now be able to open the app normally.
+
 ## Contributing
 
 Wanna add something to this dumpster fire? Here's how:

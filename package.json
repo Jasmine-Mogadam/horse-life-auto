@@ -34,12 +34,14 @@
       "target": "AppImage"
     }
   },
+  "dependencies": {
+    "tesseract.js": "^6.0.1"
+  },
   "devDependencies": {
     "chokidar": "^4.0.3",
     "electron": "^30.0.0",
     "electron-builder": "^24.6.4",
     "live-server": "^1.2.2",
-    "serve": "^14.2.0",
-    "tesseract.js": "^6.0.1"
+    "serve": "^14.2.0"
   }
 }
